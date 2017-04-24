@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<!-- JQuery Setup -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="http://dev.jtsage.com/cdn/spinbox/latest/jqm-spinbox.min.js"></script>
+
+
+</head>
+<!-- JQuery Setup -->
+
+<!-- FUNCTIONS -->
+<script>
+
+var chosenItems = {};
+
+$( document ).ready(function() {
+    var q = localStorage.getItem("previousList");
+	if (q!=null) chosenItems = JSON.parse(q);
+});
+
+
+function gotoQuantity(obj)
+{
+	$.mobile.changePage("#quantity");
+	vegetablesChosen = $(obj).text();
+	$("#vegname").text(vegetablesChosen);
+}
+
+
+
+function showChosenItems()
+{
+	if ($("#spin").val()!="0")    saveChoice();
+	 $("#shoppingList").empty();
+	 for (var key in chosenItems) {
+	  vegData = key + ":" +  chosenItems[key];
+	  $('<li>').append('<a href="#">' + vegData + '</a>').appendTo('#shoppingList');
+  	 }
+	//you have to navigate to the page after you have populated
+	$.mobile.changePage("#finalShoppingList");
+	 $("#shoppingList").listview('refresh');
+}
+
+
+
+function backToList()
+{
+	saveChoice();
+	$.mobile.changePage("#pageone");
+	$("#spin").val(0);
+}
+
+
+
+function saveChoice()
+{
+	vegetableChosen = $("#vegname").text();
+	quantityChosen = $("#spin").val();
+	chosenItems[vegetableChosen] = quantityChosen;
+	localStorage.setItem("previousList",JSON.stringify(chosenItems));
+
+}
+</script>
+
+<!-- END FUNCTIONS -->
+
+<!-- Home page -->
+<body>
+<div data-role="page" id="pageone">
+	<div data-role="header">
+    	<center><h1><b>sc14abh Personal Shopping List</b></h1></center>
+        </div>
+    <div data-role="main" align="center">
+    	<p>WELCOME TO YOUR <strong><em>PERSONAL</em></strong> SHOPPING LIST MADE BY <b><i>SC14ABH!</i></b></p>
+        <!-- buttons -->
+        <a href="#aaa" class="ui-btn ui-icon-arrow-r ui-btn-icon-right ui-alt-icon ui-btn-inline">Create your list!</a><br>
+		<a href="#list" class="ui-btn ui-icon-search ui-btn-icon-right ui-alt-icon ui-btn-inline">Load your current list</a><br>
+        <a href="#additems" class="ui-btn ui-icon-grid ui-btn-icon-right ui-alt-icon ui-btn-inline">Add items</a><br>
+        <a href="#weeklysum" class="ui-btn ui-icon-info ui-btn-icon-right ui-alt-icon ui-btn-inline">Weekly Summary</a><br>
+        <a href="#helppage" class="ui-btn ui-icon-arrow-r ui-btn-icon-right ui-alt-icon ui-btn-inline">Help</a>
+        </div>
+        </div>
+        <!-- End Buttons -->
+        <!-- End Home page -->
+        
+<!-- Help page -->
+<div data-role="page" data-dialog="true" id="helppage">
+	<div data-role="header">
+    <h1>Help Page</h1></div>
+    <div data-role="main" class="ui-content">
+    <p>Click on the "Create your list!" button to begin making your new list.<br><br>
+    Click on the "Load your current list" button to open your current list.<br><br>
+    Click on the "Add items" button to add items to your current list.<br><br>
+    Cick on the "Weekly Summary" button to view your weekly summary<br><br></p>
+    <center><a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a></center><br>
+    </div>
+    </div>
+<!-- End Help Page -->
+
+<!-- Create your list page -->
+<div data-role="page" id="aaa">
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+    <h2>Fruit</h2>
+    <form class="ui-filterable">
+      <input id="myFilter" data-type="search">
+    </form>
+    <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true">
+      <li><a onclick="gotoQuantity(this)">Apple</a></li>
+      <li><a onclick="gotoQuantity(this)">Apricots</a></li>
+      <li><a onclick="gotoQuantity(this)">Avacado</a></li>
+      <li><a onclick="gotoQuantity(this)">Banana</a></li>
+      <li><a onclick="gotoQuantity(this)">Blackberry</a></li>
+      <li><a onclick="gotoQuantity(this)">Cherry</a></li>
+      <li><a onclick="gotoQuantity(this)">Coconut</a></li>
+      <li><a onclick="gotoQuantity(this)">Dragonfruit</a></li>
+      <li><a onclick="gotoQuantity(this)">Elderberry</a></li>
+      <li><a onclick="gotoQuantity(this)">Grapes</a></li>
+      <li><a onclick="gotoQuantity(this)">Grapefruit</a></li>
+      <li><a onclick="gotoQuantity(this)">Lemon</a></li>
+      <li><a onclick="gotoQuantity(this)">Lime</a></li>
+      <li><a onclick="gotoQuantity(this)">Mango</a></li>
+      <li><a onclick="gotoQuantity(this)">Melon</a></li>
+      <li><a onclick="gotoQuantity(this)">Orange</a></li>
+      <li><a onclick="gotoQuantity(this)">Papaya</a></li>
+      <li><a onclick="gotoQuantity(this)">Peach</a></li>
+      <li><a onclick="gotoQuantity(this)">Pear</a></li>
+      <li><a onclick="gotoQuantity(this)">Pineapple</a></li>
+      <li><a onclick="gotoQuantity(this)">Strawberry</a></li>
+    </ul>
+  </div>
+</div> 
+
+<!-- End Create your list page -->
+
+<!-- Load your current list page -->
+<div data-role="page" id="list">
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+    	<center><h1><b>sc14abh Personal Shopping List</b></h1></center>
+        </div></div>
+<!-- End Load your current list page -->
+
+<!-- Add items page -->
+<div data-role="page" id="additems">
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+    	<center><h1><b>sc14abh Personal Shopping List</b></h1></center>
+        </div></div>
+<!-- End Add items page -->
+
+<!-- Weekly Summary page -->
+<div data-role="page" id="weeklysum">
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+    	<center><h1><b>sc14abh Personal Shopping List</b></h1></center>
+        </div>
+<!-- End Weekly Summary page -->
+
+<div data-role="page" id="quantity">
+  <div data-role="main" class="ui-content">
+  	  <div id="fruitname"></div>
+     <div class="ui-field-contain">
+       <label for="spin">Amount needed:</label>
+       <input type="text" data-role="spinbox" name="spin" id="spin" value="0" min="0" max="100" />
+      </div>
+      <button onclick="backToList()">Choose Again</button>
+      <button onclick="showChosenItems()">Accept</button>
+ </div>
+ 
+ <div data-role="page" id="finalShoppingList">
+  <div data-role="main" class="ui-content">
+  <div id="allVegetablesChosen">
+  <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true" id="shoppingList">
+  </ul>
+  <button onclick="$.mobile.changePage('#pageone');">Choose Again</button>
+  </div>
+  </div>
+  </div>
+
+ 
+ <div data-role="page" id="finalcurrentlist">
+  <div data-role="main" class="ui-content">
+  <div id="allVegChosen">
+  <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true" id="currentlist">
+  </ul>
+  <button onclick="$.mobile.changePage('#pageone');">Choose Again</button>
+  </div>
+  </div>
+</div>
+</div>
+</div>
+
+
+</body>
+</html>
