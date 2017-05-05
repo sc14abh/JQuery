@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="http://dev.jtsage.com/cdn/spinbox/latest/jqm-spinbox.min.js"></script>
+</head>
+<body>
+<script>
+var chosenItems = {};
+var allItems = [];
+	var hold;
+	var save = 0;
+
+
+$( document ).ready(function() {
+    var q = localStorage.getItem("previousList");
+    if (q!=null) chosenItems = JSON.parse(q);
+var l = localStorage.getItem("items");
+if (l!=null) allItems = JSON.parse(l);
+    $("#new_item").keypress(function (){
+        var _val = $("#new_item").val();
+        var _txt = _val.charAt(0).toUpperCase() + _val.slice(1);
+        $("#new_item").val(_txt);
+    });
+
+});
+        
+function gotoItems()
+{
+    allItems.sort();
+    $("#pagelist").empty();
+    for (var x in allItems)
+    {
+        vegData =  allItems[x];
+        $('<li>').append('<a onclick="gotoQuantity(this)">' + vegData + '</a>').appendTo('#pagelist');
+    };
+    $.mobile.changePage("#lists");
+    $("#pagelist").listview('refresh');
+}
+
+function gotoQuantity(obj)
+{
+    $.mobile.changePage("#quantity");
+    vegetablesChosen = $(obj).text();
+    $("#vegname").text(vegetablesChosen);
+    $('#del').empty();
+
+    $('#del').append('<a onclick="delAll()" class="ui-btn ui-btn-inline ui-corner-all">Delete</a>');
+
+}
+
+function delAll()
+{
+vegetableChosen = $("#vegname").text();
+    delete chosenItems[vegetableChosen];
+    save = 2;
+    saveChoice();
+    vegetableChosen = allItems.indexOf(vegetableChosen);
+    allItems.splice(vegetableChosen, 1);
+    save = 1;
+    saveChoice();
+    gotoItems();
+
+}
+
+function AddItem()
+{
+    hold = $("#Filter").val();
+    if (hold.length > 0)
+    {
+        if (allItems.indexOf(hold) == -1) 
+        {
+            allItems[allItems.length] = hold;
+            alert("Now in list");
+save = 1;
+saveChoice();
+        }
+        else 
+        {
+            alert($("#new_item").val() +  " - This item is already in the list. Please choose another item.");
+        }
+        allItems.sort();
+    }
+    else alert("The list is empty.");
+}
+
+function showChosenItems()
+{
+    if ($("#spin").val()!="0"){save = 0;    saveChoice();}
+     $("#shoppingList").empty();
+     for (var key in chosenItems) {
+      vegData = key + ":" +  chosenItems[key];
+        $('<li>').append('<a onclick="gotoQuantity(this)">' + vegData + '</a>').appendTo('#shoppingList');
+     }
+    $.mobile.changePage("#finalShoppingList");
+     $("#shoppingList").listview('refresh');
+}
+
+function backToList()
+{
+save = 0;
+    saveChoice();
+    $.mobile.changePage("#items");
+    $("#spin").val(0);
+}
+
+function saveChoice()
+    {
+if (save == 0)
+{
+    vegetableChosen = $("#vegname").text();
+    quantityChosen = $("#spin").val();
+    if (vegetablesChosen.indexOf(':') >-1)
+    {
+        vegetableChosen = vegetableChosen.slice(0,vegetableChosen.indexOf(':'));
+    }
+    if (vegetableChosen in chosenItems)
+    {
+        alert("Item already exists in your list...");
+    }
+    chosenItems[vegetableChosen] = quantityChosen;
+    localStorage.setItem("previousList",JSON.stringify(chosenItems));
+}
+if (save ==1)
+{
+
+    localStorage.setItem("items",JSON.stringify(allItems));
+}
+if (save ==2)
+    localStorage.setItem("previousList",JSON.stringify(chosenItems));
+}
+function clearLists()
+{
+    all_items = [];
+    chosenItems = {};
+    localStorage.clear();
+}
+function defaultLists()
+{
+	allItems = ["Apples", "Apricots", "Avacado", "Banana", "Blackberry","Cherry","Coconut","Dragonfruit","Elderberry","Grapes","Grapefruit","Lemon","Lime","Mango","Melon","Orange","Papaya","Peach","Pear","Pineapple","Strawberry"];
+	save = 1;
+	saveChoice();
+	gotoItems();
+}
+</script>
+
+
+ <!-- Home_Page -->
+<div data-role="page" id="pageone">
+  <div data-role="header">
+    <h1>Personal Shopping List Application</h1>
+  </div> 
+   <div data-role="main" align="center">
+    <p>Shopping list Homepage </p>
+    <a onclick="gotoItems()" class="ui-btn ui-icon-arrow-r ui-btn-icon-right ui-btn-inline">Create Your List</a>
+    <br>
+    <a onclick="showChosenItems()" class="ui-btn ui-icon-search ui-btn-icon-right ui-btn-inline">Load Shopping List</a>
+    <br>
+    <a href="#additems" class="ui-btn ui-icon-grid ui-btn-icon-right ui-btn-inline">Add Items</a>
+    <br>
+    <a href="#report" class="ui-btn ui-icon-search ui-btn-icon-right ui-btn-inline">Weekly List Summary</a>
+    <br>
+    <a href="#help" class="ui-btn ui-icon-info ui-btn-icon-right ui-btn-inline">Help Page</a>
+    <br>  
+    <a onclick="defaultLists()" class="ui-btn ui-icon-info ui-btn-icon-right ui-btn-inline">Reset List to Default</a>
+	</div> 
+   </div>
+<!-- End Home Page -->
+  
+<!-- Create Your List Page -->
+<div data-role="page" id="lists">
+<div data-role="header">
+    <h1>Personal Shopping List Application</h1>
+    <a onclick="defaultLists()" class="ui-btn ui-icon-search ui-btn-icon-right ui-btn-inline">Load/Reset Items</a>
+  </div> 
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+  	<h2>Create List</h2>
+    <form class="ui-filterable">
+      <input id="myFilter" data-type="search">
+    </form>
+     	<ul id="pagelist" data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true">
+      </ul>
+   </div>
+</div>
+<!-- End Create Your List Page -->
+ 
+<!-- Load Your List Page -->
+<div data-role="page" id="load">
+<div data-role="header">
+    <h1>Personal Shopping List Application</h1>
+  </div> 
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+  <h2>Load Shopping List</h2>
+    </div>
+</div>
+<!-- End Load Your List Page -->
+    
+<!-- Add Items Page -->
+   <div data-role="page" id="additems" align="center">
+<div data-role="header">
+    <h1>Personal Shopping List Application</h1>
+  </div> 
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+  <center><h2>Add items</h2></center>
+  <input id="Filter" data-type="text">
+  <a onclick="AddItem()" class="ui-btn ui-icon-grid ui-btn-icon-right ui-btn-inline">Add Items</a>
+    </div>
+</div>
+<!-- End Add Items Page -->
+   
+<!-- Weekly Shopping List Page -->
+   <div data-role="page" id="report">
+<div data-role="header">
+    <h1>Personal Shopping List Application</h1>
+  </div> 
+<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+  <h2>Report of previous shopping lists</h2>
+    </div>
+</div>
+<!-- End Weekly Shopping List Page -->
+    
+<!-- Help Page -->
+ <div data-role="page" data-dialog="true" id="help">
+ 	<div data-role="header">
+    	<h1>Help</h1>
+ </div>
+ <div data-role="main" class="ui-content">
+ 	<p>To make your own shopping list go to the homepage and click on the "create your list" button <br>
+    <br>Whilst shopping, to view your saved shopping lists, go on the homepage and click on the "load list" button <br>
+        <br>Whilst shopping, to add items to your shopping list, go on the homepage and click on the "add items" button <br>
+    <br>When you've finished your weekly shop, to view your weekly shopping lists, go on the homepage and click on the "weekly list summary" button </p>
+    	<div align="center">
+        	<a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-inline"> Return to Home</a>
+          </div>
+   </div> 
+   	</div>
+<!-- End Help Page -->
+    
+<!-- Quantity/Spinner Page -->
+    <div data-role="page" id="quantity">
+    <a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+  <div data-role="main" class="ui-content">
+  	  <div id="vegname"></div>
+     <div class="ui-field-contain">
+       <label for="spin">Input spinner</label>
+       <input type="text" data-role="spinbox" name="spin" id="spin" value="0" min="0" max="10" />
+      </div>
+      <button onclick="backToList()" class=" ui-btn ui-shadow ui-corner-all">Choose Again</button>
+      <button onclick="showChosenItems()" class=" ui-btn ui-shadow ui-corner-all">Show Chosen Items</button>
+      <div id="del"> </div>
+ </div>
+ </div>
+ <!-- End Quantity/Spinner Page -->
+    
+<!-- Show Chosen Items Page -->
+    <div data-role="page" id="finalShoppingList">
+    <a href="#pageone" class="ui-btn ui-icon-home ui-btn-icon-right ui-alt-icon ui-btn-inline">Back to Home</a><br>
+      <div data-role="main" class="ui-content">
+          <div id="allVegetablesChosen">
+              <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true" id="shoppingList">
+              </ul>
+              <button onclick="$.mobile.changePage('#pageone');">Choose Again</button>
+          </div>
+      </div>
+  </div>
+<!-- End Show Chosen Items Page -->
+</body>
+</html>
